@@ -6,7 +6,6 @@ class Artist():
     __tablename__ = "artist"
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
-    language = Column(JSONB)
 
     def __str__(self):
         return json.dumps(f'"id": {self.id}')
@@ -24,13 +23,20 @@ class Release():
     name = Column(String(40), nullable=False)
     cover = Column(String)
 
+class ReleaseArtist():
+    __tablename__ = "release_artist"
+    release_id = Column(ForeignKey(Release.id))
+    artist_id = Column(ForeignKey(Artist.id))
+
 class Track():
-    __tablename__ = "release"
+    __tablename__ = "track"
     id = Column(Integer, primary_key=True)
     release_id = Column(ForeignKey(Release.id), nullable=False)
-    name = Column(String(200), nullable=False)
+    number = Column(Integer)
+    guests_list = Column(ARRAY(String))
+    title = Column(String(200), nullable=False)
     duration = Column(Integer)
+    genre = Column(JSONB)
+    bitrate = Column(Integer)
     file_name = Column(String(255))
     cover = Column(String)
-    genre = Column(JSONB)
-    guest = Column(ARRAY(String))

@@ -1,29 +1,30 @@
+import re
 import eyed3
 from datetime import datetime
+from schemas.adding_release import AddingRelease, AddingReleaseTrack
 
-eyed3.log.setLevel("ERROR")
+def Read(audio) -> AddingRelease:
+    eyed3.log.setLevel("ERROR")
+    audiofile = eyed3.load(audio)
+    gbd = audiofile.tag.getBestDate()
+    release_date = datetime(gbd.year, gbd.month, gbd.day).strftime('%Y-%m-%d') if gbd.month and gbd.day else str(gbd.year)
+    genre_list = re.split('[,/]\s', audiofile.tag.genre.name)
+    track = AddingReleaseTrack(
+        track_num = audiofile.tag.track_num[0],
+        track_title = audiofile.tag.title,
+        genre = genre_list,
+        bitrate = audiofile.info.bit_rate_str,
+        file_size = int(audiofile.info.size_bytes),
+        duration = int(audiofile.info.time_secs)
+    )
+    release = AddingRelease(
+        artist = audiofile.tag.album_artist or audiofile.tag.artist, 
+        album = audiofile.tag.album,
+        release_date = release_date,
+        tracks = [track]
+    )
+    return release
 
-audiofile = eyed3.load("07 Feelin' Good.mp3")
-# audiofile = eyed3.load("04 FIRE BIRD.mp3")
-
-
-if audiofile.tag.getBestDate().month and audiofile.tag.getBestDate().day:
-    release_date = str(audiofile.tag.getBestDate().year)+'-'+str(audiofile.tag.getBestDate().month)+'-'+str(audiofile.tag.getBestDate().day)
-else:
-    release_date = str(audiofile.tag.getBestDate().year)
-release_date = datetime.strptime(release_date, '%Y-%m-%d')
-json = {
-    "artist": audiofile.tag.album_artist or audiofile.tag.artist,
-    "album": audiofile.tag.album,
-    "release_date": release_date,
-    "tracks": {
-        "track_num": audiofile.tag.track_num[0],
-        "track_title": audiofile.tag.title,
-        "genre": audiofile.tag.genre.name,
-        "bitrate": audiofile.info.bit_rate_str,
-        "file_size": audiofile.info.size_bytes,
-        "duration": audiofile.info.time_secs,
-    },
-}
-
-print(json)
+if __name__ == "__main__":
+    print(Read("07 Feelin' Good.mp3"))
+    print(Read("04 FIRE BIRD.mp3"))
