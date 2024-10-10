@@ -1,4 +1,7 @@
 fastapi==0.114.2
 eyed3==0.9.7
 uvicorn==0.30.6
+alembic==1.13.3
+alembic_utils==0.8.4
 sqlalchemy==2.0.34
+asyncpg==0.29.0

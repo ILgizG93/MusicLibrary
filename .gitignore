@@ -1,6 +1,8 @@
 .vscode/
 legacy/
 *.mp3
+database.json
+models/versions/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
