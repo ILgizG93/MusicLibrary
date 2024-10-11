@@ -12,7 +12,7 @@ db_model = declarative_base(metadata=MetaData())
 DB_URL = f"postgresql://{db.username}:{db.password}@{db.host}:{db.port}/{db.name}"
 DB_URL_ASYNC = f"postgresql+asyncpg://{db.username}:{db.password}@{db.host}:{db.port}/{db.name}"
 
-def get_airporterina_session() -> Session:
+def get_db_session() -> Session:
     try:
         air_engine = create_engine(DB_URL)
         session: Session = Session(air_engine)
@@ -20,7 +20,7 @@ def get_airporterina_session() -> Session:
     finally:
         session.close()
 
-async def get_airporterina_session_async() -> AsyncGenerator[AsyncSession, None]:
+async def get_db_session_async() -> AsyncGenerator[AsyncSession, None]:
     try:
         air_engine = create_async_engine(DB_URL_ASYNC, echo=True)
         air_async_session = sessionmaker(air_engine, class_=AsyncSession, expire_on_commit=False)
