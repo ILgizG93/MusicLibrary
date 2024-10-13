@@ -10,7 +10,7 @@ class Menu(db_model):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(32))
     lvl: Mapped[int] = mapped_column(Integer, server_default=text("1"))
-    parent: Mapped[int] = mapped_column(Integer, nullable=True)
+    parent: Mapped[int | None]
     link: Mapped[str] = mapped_column(String(60))
     
     __table_args__ = {"schema": db.schema}
@@ -55,7 +55,7 @@ class User(db_model):
     users_groups_id: Mapped[int] = mapped_column(Integer, ForeignKey(User_group.id))
     privilege_list: Mapped[ARRAY] = mapped_column(ARRAY(Integer))
     registration_datetime: Mapped[TIMESTAMP] = mapped_column(TIMESTAMP, server_default=text("timezone('utc', now())"))
-    is_deleted: Mapped[bool] = mapped_column(BOOLEAN, nullable=True)
+    is_deleted: Mapped[bool | None]
     
     users_groups = relationship('User_group', back_populates='users',)
     
@@ -71,7 +71,7 @@ class Member(db_model):
     first_name: Mapped[str] = mapped_column(String(25))
     middle_name: Mapped[str] = mapped_column(String(30), nullable=True)
     countries_id: Mapped[int] = mapped_column(Integer, ForeignKey(Country.id))
-    born_datetime: Mapped[TIMESTAMP] = mapped_column(TIMESTAMP, nullable=True)
+    born_datetime: Mapped[TIMESTAMP | None]
 
     countries = relationship('Country', back_populates='members',)
     
@@ -82,8 +82,8 @@ class Artist(db_model):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(100))
     countries_id: Mapped[int] = mapped_column(Integer, ForeignKey(Country.id))
-    origin_date: Mapped[TIMESTAMP] = mapped_column(TIMESTAMP, nullable=True)
-    is_group: Mapped[bool] = mapped_column(BOOLEAN, nullable=True)
+    origin_date: Mapped[TIMESTAMP | None]
+    is_group: Mapped[bool | None]
     description: Mapped[str] = mapped_column(String(1024), nullable=True)
 
     countries = relationship('Country', back_populates='artists',)
@@ -115,7 +115,7 @@ class Release(db_model):
     name: Mapped[str] = mapped_column(String(256))
     genres_id_list: Mapped[ARRAY] = mapped_column(ARRAY(Integer))
     releases_types_id: Mapped[int] = mapped_column(Integer, ForeignKey(ReleaseType.id))
-    release_date: Mapped[TIMESTAMP] = mapped_column(TIMESTAMP)
+    release_date: Mapped[TIMESTAMP]
     artists_id_list: Mapped[ARRAY] = mapped_column(ARRAY(Integer))
     cover: Mapped[str] = mapped_column(String(100), nullable=True)
 
@@ -131,10 +131,10 @@ class Track(db_model):
     artists_id_list: Mapped[ARRAY] = mapped_column(ARRAY(Integer))
     release_date: Mapped[TIMESTAMP] = mapped_column(TIMESTAMP, nullable=True)
     releases_id: Mapped[int] = mapped_column(Integer, ForeignKey(Release.id))
-    number: Mapped[int] = mapped_column(Integer, nullable=True)
-    bitrate: Mapped[int] = mapped_column(Integer)
-    file_size: Mapped[int] = mapped_column(Integer)
-    duration: Mapped[int] = mapped_column(Integer)
+    number: Mapped[int | None]
+    bitrate: Mapped[int]
+    file_size: Mapped[int]
+    duration: Mapped[int]
     file: Mapped[str] = mapped_column(String(256))
 
     releases = relationship('Release', back_populates='tracks',)
