@@ -6,20 +6,22 @@ from schemas.adding_release import AddingRelease, AddingReleaseTrack
 def Read(audio) -> AddingRelease:
     eyed3.log.setLevel("ERROR")
     audiofile = eyed3.load(audio)
-    gbd = audiofile.tag.getBestDate()
-    release_date = datetime(gbd.year, gbd.month, gbd.day).strftime('%Y-%m-%d') if gbd.month and gbd.day else str(gbd.year)
-    genre_list = re.split('[,/]\s', audiofile.tag.genre.name)
+    audio_tag = audiofile.tag
+    audio_info = audiofile.info
+    audio_date = audio_tag.getBestDate()
+    release_date = datetime(audio_date.year, audio_date.month, audio_date.day).strftime('%Y-%m-%d') if audio_date.month and audio_date.day else str(audio_date.year)
+    genre_list = re.split('[,/]\s', audio_tag.genre.name)
     track = AddingReleaseTrack(
-        track_num = audiofile.tag.track_num[0],
-        track_title = audiofile.tag.title,
+        track_num = audio_tag.track_num[0],
+        track_title = audio_tag.title,
         genre = genre_list,
-        bitrate = audiofile.info.bit_rate_str,
-        file_size = int(audiofile.info.size_bytes),
-        duration = int(audiofile.info.time_secs)
+        bitrate = audio_info.bit_rate_str,
+        file_size = int(audio_info.size_bytes),
+        duration = int(audio_info.time_secs)
     )
     release = AddingRelease(
-        artist = audiofile.tag.album_artist or audiofile.tag.artist, 
-        album = audiofile.tag.album,
+        artist = audio_tag.album_artist or audio_tag.artist, 
+        album = audio_tag.album,
         release_date = release_date,
         tracks = [track]
     )
