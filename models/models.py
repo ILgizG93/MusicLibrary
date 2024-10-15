@@ -18,7 +18,6 @@ class Menu(db_model):
     __table_args__ = {"schema": db.schema}
 ###-------------------------------------------------------------###
 
-
 ###--------------------------Countries--------------------------###
 class Country(db_model):
     __tablename__ = "countries"
@@ -28,7 +27,6 @@ class Country(db_model):
     artists: Mapped[List["Artist"]] = relationship(back_populates='countries')    
     __table_args__ = {"schema": db.schema}
 ###-------------------------------------------------------------###
-
 
 ###-----------------------Users & Groups------------------------###
 class Privilege(db_model):
@@ -42,7 +40,6 @@ class User_group(db_model):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(200))    
     users: Mapped[List["User"]] = relationship(back_populates='users_groups')
-    
     __table_args__ = {"schema": db.schema}
 
 class User(db_model):
@@ -57,7 +54,6 @@ class User(db_model):
     users_groups: Mapped["User_group"] = relationship(back_populates='users')    
     __table_args__ = {"schema": db.schema}
 ###-------------------------------------------------------------###
-
 
 ###----------------------Artists & Groups-----------------------###
 class Member(db_model):
@@ -82,7 +78,6 @@ class Artist(db_model):
     countries: Mapped["Country"] = relationship(back_populates='artists')
     __table_args__ = {"schema": db.schema}
 ###-------------------------------------------------------------###
-
 
 ###--------------------------Releases---------------------------###
 class Genre(db_model):
