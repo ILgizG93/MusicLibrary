@@ -48,7 +48,7 @@ class User(db_model):
     login: Mapped[str] = mapped_column(String(200))
     password: Mapped[str] = mapped_column(String(200))
     users_groups_id: Mapped[int] = mapped_column(Integer, ForeignKey(User_group.id))
-    privilege_list: Mapped[ARRAY] = mapped_column(ARRAY(Integer))
+    privilege_list: Mapped[list] = mapped_column(ARRAY(Integer))
     registration_datetime: Mapped[datetime] = mapped_column(server_default=text("timezone('utc', now())"))
     is_deleted: Mapped[bool | None]
     users_groups: Mapped["User_group"] = relationship(back_populates='users')    
@@ -97,10 +97,10 @@ class Release(db_model):
     __tablename__ = "releases"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(256))
-    genres_id_list: Mapped[ARRAY] = mapped_column(ARRAY(Integer))
+    genres_id_list: Mapped[list] = mapped_column(ARRAY(Integer))
     releases_types_id: Mapped[int] = mapped_column(Integer, ForeignKey(ReleaseType.id))
     release_date: Mapped[datetime]
-    artists_id_list: Mapped[ARRAY] = mapped_column(ARRAY(Integer))
+    artists_id_list: Mapped[list] = mapped_column(ARRAY(Integer))
     cover: Mapped[str | None] = mapped_column(String(100))
     releases_types: Mapped["ReleaseType"] = relationship(back_populates='releases')
     tracks: Mapped[List["Track"]] = relationship(back_populates='releases')
@@ -110,7 +110,7 @@ class Track(db_model):
     __tablename__ = "tracks"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(256))
-    artists_id_list: Mapped[ARRAY] = mapped_column(ARRAY(Integer))
+    artists_id_list: Mapped[list] = mapped_column(ARRAY(Integer))
     release_date: Mapped[date | None]
     releases_id: Mapped[int] = mapped_column(Integer, ForeignKey(Release.id))
     number: Mapped[int | None]
