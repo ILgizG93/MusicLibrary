@@ -62,7 +62,7 @@ class Member(db_model):
     last_name: Mapped[str] = mapped_column(String(25))
     first_name: Mapped[str] = mapped_column(String(25))
     middle_name: Mapped[str | None] = mapped_column(String(30))
-    scene_name: Mapped[str | None]
+    stage_name: Mapped[str | None]
     artists_id_list: Mapped[list] = mapped_column(ARRAY(Integer))
     countries_id: Mapped[int] = mapped_column(Integer, ForeignKey(Country.id))
     born_datetime: Mapped[datetime | None]
