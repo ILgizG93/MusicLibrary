@@ -64,6 +64,8 @@ class Member(db_model):
     middle_name: Mapped[str | None] = mapped_column(String(30))
     countries_id: Mapped[int] = mapped_column(Integer, ForeignKey(Country.id))
     born_datetime: Mapped[datetime | None]
+    member_since: Mapped[datetime | None]
+    member_until: Mapped[datetime | None]
     countries: Mapped["Country"] = relationship(back_populates='members')
     __table_args__ = {"schema": db.schema}
 
