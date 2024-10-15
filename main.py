@@ -1,12 +1,12 @@
 import uvicorn
 from fastapi import FastAPI, APIRouter
 
-from router import router
+from router.artist import router as artist_router
 
 app = FastAPI()
 
 main_router = APIRouter()
-main_router.include_router(router, prefix="/music", tags=["Music"])
+main_router.include_router(artist_router, prefix="/artist", tags=["Artist"])
 app.include_router(main_router)
 
 if __name__ == "__main__":

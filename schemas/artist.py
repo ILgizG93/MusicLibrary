@@ -6,10 +6,19 @@ class TunedModel(BaseModel):
     class Config:
         from_attributes = True
 
-class ArtistSchema(TunedModel):
-    id: int
+class ArtistSchemaBeforeAppend(TunedModel):
     name: str
-    country: str
+    countries_id: int
     origin_date: Optional[datetime] = None
     is_group: Optional[bool] = None
     description: Optional[str] = None
+
+class ArtistSchemaAfterAppend(TunedModel):
+    id: int
+    name: str
+    origin_date: Optional[datetime] = None
+    is_group: Optional[bool] = None
+    description: Optional[str] = None
+
+class ArtistSchema(ArtistSchemaAfterAppend):
+    country: str
