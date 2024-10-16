@@ -126,7 +126,7 @@ class Track(db_model):
     name: Mapped[str] = mapped_column(String(256))
     artists_id_list: Mapped[list] = mapped_column(ARRAY(Integer))
     release_date: Mapped[date | None]
-    releases_id: Mapped[int] = mapped_column(Integer, ForeignKey(Release.id))
+    releases_id: Mapped[int | None] = mapped_column(Integer, ForeignKey(Release.id))
     number: Mapped[int | None]
     bitrate: Mapped[int]
     file_size: Mapped[int]
