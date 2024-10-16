@@ -63,12 +63,10 @@ class Member(db_model):
     first_name: Mapped[str] = mapped_column(String(25))
     middle_name: Mapped[str | None] = mapped_column(String(30))
     stage_name: Mapped[str | None]
-    artists_id_list: Mapped[list] = mapped_column(ARRAY(Integer))
     countries_id: Mapped[int] = mapped_column(Integer, ForeignKey(Country.id))
     born_datetime: Mapped[datetime | None]
-    member_since: Mapped[datetime | None]
-    member_until: Mapped[datetime | None]
     countries: Mapped["Country"] = relationship(back_populates='members')
+    artists_members: Mapped["ArtistMember"] = relationship(back_populates='members')
     __table_args__ = {"schema": db.schema}
 
 class Artist(db_model):
@@ -80,6 +78,18 @@ class Artist(db_model):
     is_group: Mapped[bool | None]
     description: Mapped[str | None] = mapped_column(String(1024))
     countries: Mapped["Country"] = relationship(back_populates='artists')
+    artists_members: Mapped["ArtistMember"] = relationship(back_populates='artists')
+    __table_args__ = {"schema": db.schema}
+
+class ArtistMember(db_model):
+    __tablename__ = "artists_members"
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    artists_id: Mapped[int] = mapped_column(Integer, ForeignKey(Artist.id))
+    members_id: Mapped[int] = mapped_column(Integer, ForeignKey(Member.id))
+    member_since: Mapped[datetime | None]
+    member_until: Mapped[datetime | None]
+    artists: Mapped["Artist"] = relationship(back_populates='artists_members')
+    members: Mapped["Member"] = relationship(back_populates='artists_members')
     __table_args__ = {"schema": db.schema}
 ###-------------------------------------------------------------###
 
