@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel
+from decimal import Decimal
 
 class TunedModel(BaseModel):
     class Config:
@@ -13,12 +14,13 @@ class ReleaseTypeSchema(TunedModel):
 class TrackSchemaBeforeInsert(TunedModel):
     name: str
     artists_id_list: list[int]
-    release_date: Optional[str] = None
+    release_date: Optional[datetime] = None
     releases_id: Optional[int] = None
-    number: Optional[int] = None
+    number: int
+    duration: int
     bitrate: int
     file_size: int
-    duration: int
+    file_format: str
     file: str
 
 class TrackSchemaAfterInsert(TrackSchemaBeforeInsert):
@@ -35,9 +37,20 @@ class ReleaseSchemaBeforeInsert(TunedModel):
     release_date: datetime
     artists_id_list: list[int]
     cover: Optional[str] = None
+    tracks: Optional[list[TrackSchemaBeforeInsert]] = None
 
 class ReleaseSchemaAfterInsert(ReleaseSchemaBeforeInsert):
     id: int
+
+class TracksListSchema(TunedModel):
+    id: int
+    title: str
+    number: int
+    duration: str
+    bitrate: int
+    file_size: Decimal
+    file_format: str
+    file: str
 
 class ReleaseSchema(TunedModel):
     id: int
@@ -46,4 +59,5 @@ class ReleaseSchema(TunedModel):
     release_date: str
     genres: list[str]
     artists: list[str]
-    cover: Optional[str] = None
+    cover: str
+    tracks: Optional[list[TracksListSchema]] = None
