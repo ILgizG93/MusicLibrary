@@ -114,7 +114,8 @@ class Release(db_model):
     genres_id_list: Mapped[list] = mapped_column(ARRAY(Integer))
     releases_types_id: Mapped[int] = mapped_column(Integer, ForeignKey(ReleaseType.id))
     release_date: Mapped[datetime]
-    artists_id_list: Mapped[list] = mapped_column(ARRAY(Integer))
+    artists_id_list: Mapped[list | None] = mapped_column(ARRAY(Integer))
+    members_id_list: Mapped[list | None] = mapped_column(ARRAY(Integer))
     cover: Mapped[str | None] = mapped_column(String(100))
     releases_types: Mapped["ReleaseType"] = relationship(back_populates='releases')
     tracks: Mapped[List["Track"]] = relationship(back_populates='releases')
@@ -124,13 +125,15 @@ class Track(db_model):
     __tablename__ = "tracks"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(256))
-    artists_id_list: Mapped[list] = mapped_column(ARRAY(Integer))
+    artists_id_list: Mapped[list | None] = mapped_column(ARRAY(Integer))
+    members_id_list: Mapped[list | None] = mapped_column(ARRAY(Integer))
     release_date: Mapped[date | None]
     releases_id: Mapped[int | None] = mapped_column(Integer, ForeignKey(Release.id))
     number: Mapped[int | None]
     bitrate: Mapped[int]
-    file_size: Mapped[int]
     duration: Mapped[int]
+    file_size: Mapped[int]
+    file_format: Mapped[str]
     file: Mapped[str] = mapped_column(String(256))
     releases: Mapped["Release"] = relationship(back_populates='tracks')
     __table_args__ = {"schema": db.schema}
