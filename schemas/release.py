@@ -6,6 +6,10 @@ class TunedModel(BaseModel):
     class Config:
         from_attributes = True
 
+class ReleaseTypeSchema(TunedModel):
+    id: int
+    name: str
+
 class TrackSchemaBeforeInsert(TunedModel):
     name: str
     artists_id_list: list[int]
@@ -35,6 +39,11 @@ class ReleaseSchemaBeforeInsert(TunedModel):
 class ReleaseSchemaAfterInsert(ReleaseSchemaBeforeInsert):
     id: int
 
-class ReleaseSchema(ReleaseSchemaAfterInsert):
+class ReleaseSchema(TunedModel):
+    id: int
+    release_type: str
+    title: str
+    release_date: str
     genres: list[str]
     artists: list[str]
+    cover: Optional[str] = None
