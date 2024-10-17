@@ -11,7 +11,7 @@ from models.models import Artist, ArtistMember, Member, Country, Release, Releas
 from schemas.artist import (
     ArtistSchema, ArtistSchemaBeforeInsert, ArtistSchemaAfterInsert, 
     MemberSchema, MemberSchemaBeforeInsert, MemberSchemaAfterInsert,
-    ArtistTrackSchema
+    ArtistTrackSchema, ArtistReleaseSchema
 )
 
 router = APIRouter()
@@ -42,7 +42,7 @@ async def get_artists(session: AsyncSession = Depends(get_db_session_async)) -> 
         return result
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
-@router.get("/{id}/members", response_model=list[MemberSchema])
+@router.get("/{id}/members/", response_model=list[MemberSchema])
 async def get_artist_members(id: int, session: AsyncSession = Depends(get_db_session_async)) -> Optional[list[MemberSchema]]:
     query = select(
                 Member.id, Member.last_name, Member.first_name, Member.middle_name, Member.stage_name, 
@@ -62,14 +62,14 @@ async def get_artist_members(id: int, session: AsyncSession = Depends(get_db_ses
         return result
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
-@router.get("/{id}/releases")
-async def get_artist_releases(id: int, session: AsyncSession = Depends(get_db_session_async)):
+@router.get("/{id}/releases/", response_model=list[ArtistReleaseSchema])
+async def get_artist_releases(id: int, session: AsyncSession = Depends(get_db_session_async)) -> Optional[list[ArtistReleaseSchema]]:
     release_date = func.to_char(Release.release_date, 'yyyy-mm-dd').label('release_date')
     query = select(
-                Release.id, Release.name.label('album'), ReleaseType.name.label('album_type'), release_date,
-                func.count(Track.id).over(partition_by=Release.id).label('tracks_count'),
+                Release.id, Release.name.label('album'), ReleaseType.id.label('album_type_id'), ReleaseType.name.label('album_type'), 
+                release_date, func.count(Track.id).over(partition_by=Release.id).label('tracks_count'),
                 func.to_char((func.sum(Track.duration).over(partition_by=Release.id)*text("interval '1 sec'")), 'hh24:mi:ss').label('duration'),
-                (func.sum(Track.file_size).over(partition_by=Release.id)/1024/1024).label('size')).\
+                func.round((func.sum(Track.file_size).over(partition_by=Release.id)/1024/1024), 2).label('size')).\
             distinct().\
             join(ReleaseType, ReleaseType.id == Release.releases_types_id).\
             outerjoin(Track, Track.releases_id == Release.id).\
@@ -81,7 +81,7 @@ async def get_artist_releases(id: int, session: AsyncSession = Depends(get_db_se
         return result
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
-@router.get("/{id}/tracks", response_model=list[ArtistTrackSchema])
+@router.get("/{id}/tracks/", response_model=list[ArtistTrackSchema])
 async def get_artist_tracks(id: int, session: AsyncSession = Depends(get_db_session_async)) -> Optional[list[ArtistTrackSchema]]:
     track_artist: Artist = aliased(Artist)
     release_artist: Artist = aliased(Artist)
@@ -104,7 +104,7 @@ async def get_artist_tracks(id: int, session: AsyncSession = Depends(get_db_sess
         return result
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
-@router.post("/insert", response_model=ArtistSchemaAfterInsert)
+@router.post("/insert/", response_model=ArtistSchemaAfterInsert)
 async def insert_artist(body: ArtistSchemaBeforeInsert, session: AsyncSession = Depends(get_db_session_async)) -> ArtistSchemaAfterInsert:
     body: dict = body.model_dump(exclude_none=True)
     query = insert(Artist).values(**body).returning(Artist)

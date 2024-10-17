@@ -55,3 +55,13 @@ class ArtistTrackSchema(TunedModel):
     album: str
     artists: list[str]
     genres: list[str]
+
+class ArtistReleaseSchema(TunedModel):
+    id: int
+    album: str
+    album_type_id: int
+    album_type: str
+    release_date: str
+    tracks_count: int
+    duration: str
+    size: Decimal
